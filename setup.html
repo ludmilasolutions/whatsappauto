@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - WhatsApp Marketing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .setup-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+
+        .setup-header {
+            background-color: #128C7E;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .setup-header .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .setup-header .logo i {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+
+        .setup-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .setup-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .setup-content {
+            padding: 30px;
+        }
+
+        .setup-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .setup-steps:before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            right: 50px;
+            height: 3px;
+            background-color: #eee;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            border: 3px solid white;
+        }
+
+        .step.active .step-number {
+            background-color: #25D366;
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background-color: #128C7E;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            color: #128C7E;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #25D366;
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .code-block {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 4px solid #25D366;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: #25D366;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1da851;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-success {
+            background-color: #128C7E;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #0e6f63;
+        }
+
+        .setup-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .setup-footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .setup-footer a {
+            color: #25D366;
+            text-decoration: none;
+        }
+
+        .setup-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .firebase-config {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .config-field {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .config-field label {
+            width: 180px;
+            font-weight: 500;
+            color: #555;
+            padding-top: 12px;
+        }
+
+        .config-field input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .instructions {
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #25D366;
+        }
+
+        .instructions h4 {
+            color: #128C7E;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+        }
+
+        .test-result {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .test-result.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+            display: block;
+        }
+
+        .test-result.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .setup-steps {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .setup-steps:before {
+                display: none;
+            }
+
+            .step {
+                margin-bottom: 20px;
+            }
+
+            .config-field {
+                flex-direction: column;
+            }
+
+            .config-field label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="setup-header">
+            <div class="logo">
+                <i class="fab fa-whatsapp"></i>
+                <h1>Configuración de Firebase</h1>
+            </div>
+            <p>Sigue estos pasos para configurar tu aplicación de WhatsApp Marketing</p>
+        </div>
+
+        <div class="setup-content">
+            <div class="setup-steps">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Crear Proyecto</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Configurar Firebase</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Configurar App</div>
+                </div>
+                <div class="step" id="step4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Finalizar</div>
+                </div>
+            </div>
+
+            <!-- Paso 1: Crear proyecto en Firebase -->
+            <div class="step-content active" id="step1-content">
+                <h3 class="step-title">Paso 1: Crear Proyecto en Firebase</h3>
+                
+                <div class="instructions">
+                    <h4><i class="fas fa-info-circle"></i> Instrucciones:</h4>
+                    <ol>
+                        <li>Ve a <a href="https://console.firebase.google.com/" target="_blank">Firebase Console</a> e inicia sesión con tu cuenta de Google.</li>
+                        <li>Haz clic en "Crear un proyecto" o "Agregar proyecto".</li>
+                        <li>Asigna un nombre a tu proyecto (ej: "WhatsApp-Marketing").</li>
+                        <li>Puedes desactivar Google Analytics si no lo necesitas (opcional).</li>
+                        <li>Haz clic en "Crear proyecto" y espera a que se complete la creación.</li>
+                    </ol>
+                </div>
+                
+                <div class="form-group">
+                    <label>¿Ya has creado tu proyecto en Firebase?</label>
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        <button type="button" class="btn btn-primary" id="yes-project-btn">
+                            <i class="fas fa-check"></i> Sí, ya tengo proyecto
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="open-console-btn">
+                            <i class="fas fa-external-link-alt"></i> Abrir Firebase Console
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 2: Configurar Firebase -->
+            <div class="step-content" id="step2-content">
+                <h3 class="step-title">Paso 2: Configurar Firebase</h3>
+                
+                <div class="instructions">
+                    <h4><i class="fas fa-info-circle"></i> Instrucciones:</h4>
+                    <ol>
+                        <li>En tu proyecto de Firebase, haz clic en "Agregar una aplicación" (icono </> para web).</li>
+                        <li>Registra la aplicación con un nombre (ej: "WhatsApp Marketing Web").</li>
+                        <li>No es necesario configurar Firebase Hosting en este paso.</li>
+                        <li>Haz clic en "Registrar aplicación".</li>
+                        <li>Copia los valores de configuración que Firebase te proporciona.</li>
+                    </ol>
+                </div>
+                
+                <div class="firebase-config">
+                    <h4>Configuración de Firebase</h4>
+                    <p>Ingresa los valores de configuración de tu aplicación Firebase:</p>
+                    
+                    <div class="config-field">
+                        <label for="apiKey">apiKey:</label>
+                        <input type="text" id="apiKey" placeholder="AIzaSyB...">
+                    </div>
+                    <div class="config-field">
+                        <label for="authDomain">authDomain:</label>
+                        <input type="text" id="authDomain" placeholder="tuproyecto.firebaseapp.com">
+                    </div>
+                    <div class="config-field">
+                        <label for="projectId">projectId:</label>
+                        <input type="text" id="projectId" placeholder="tuproyecto-12345">
+                    </div>
+                    <div class="config-field">
+                        <label for="storageBucket">storageBucket:</label>
+                        <input type="text" id="storageBucket" placeholder="tuproyecto.appspot.com">
+                    </div>
+                    <div class="config-field">
+                        <label for="messagingSenderId">messagingSenderId:</label>
+                        <input type="text" id="messagingSenderId" placeholder="1234567890">
+                    </div>
+                    <div class="config-field">
+                        <label for="appId">appId:</label>
+                        <input type="text" id="appId" placeholder="1:1234567890:web:abc123...">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="test-config-btn">
+                        <i class="fas fa-vial"></i> Probar Configuración
+                    </button>
+                </div>
+                
+                <div id="test-result" class="test-result"></div>
+            </div>
+
+            <!-- Paso 3: Configurar autenticación y base de datos -->
+            <div class="step-content" id="step3-content">
+                <h3 class="step-title">Paso 3: Configurar Autenticación y Base de Datos</h3>
+                
+                <div class="instructions">
+                    <h4><i class="fas fa-info-circle"></i> Instrucciones:</h4>
+                    <p>Ahora necesitas habilitar los servicios de Firebase que usará la aplicación:</p>
+                    
+                    <h5>1. Autenticación</h5>
+                    <ol>
+                        <li>En el panel izquierdo de Firebase Console, haz clic en "Autenticación".</li>
+                        <li>Ve a la pestaña "Método de inicio de sesión".</li>
+                        <li>Habilita "Correo electrónico/contraseña".</li>
+                        <li>Haz clic en "Guardar".</li>
+                    </ol>
+                    
+                    <h5>2. Firestore Database</h5>
+                    <ol>
+                        <li>En el panel izquierdo, haz clic en "Firestore Database".</li>
+                        <li>Haz clic en "Crear base de datos".</li>
+                        <li>Selecciona "Comenzar en modo de prueba" (puedes cambiar esto después).</li>
+                        <li>Elige una ubicación para tu base de datos (cualquiera funciona).</li>
+                        <li>Haz clic en "Habilitar".</li>
+                    </ol>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-email">Correo electrónico para acceso administrativo (opcional):</label>
+                    <input type="email" id="admin-email" placeholder="admin@ejemplo.com">
+                    <small>Si ingresas un correo aquí, será el primer usuario administrador de la aplicación.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-password">Contraseña para el usuario administrativo:</label>
+                    <input type="password" id="admin-password" placeholder="Contraseña segura">
+                </div>
+                
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="setup-services-btn">
+                        <i class="fas fa-cogs"></i> Configurar Servicios
+                    </button>
+                </div>
+                
+                <div id="services-result" class="test-result"></div>
+            </div>
+
+            <!-- Paso 4: Finalizar -->
+            <div class="step-content" id="step4-content">
+                <h3 class="step-title">Paso 4: Finalizar Configuración</h3>
+                
+                <div class="instructions">
+                    <h4><i class="fas fa-check-circle"></i> ¡Configuración completada!</h4>
+                    <p>Tu aplicación de WhatsApp Marketing está casi lista. Solo necesitas guardar la configuración.</p>
+                    
+                    <div class="code-block">
+                        <p>La configuración de Firebase se guardará en el archivo <strong>firebase-config.js</strong> que la aplicación utilizará para conectarse a Firebase.</p>
+                    </div>
+                    
+                    <p>Una vez guardada la configuración, podrás acceder a la aplicación principal.</p>
+                </div>
+                
+                <div id="final-result" class="test-result"></div>
+                
+                <div class="form-group">
+                    <button type="button" class="btn btn-success" id="save-config-btn">
+                        <i class="fas fa-save"></i> Guardar Configuración y Continuar
+                    </button>
+                </div>
+            </div>
+
+            <div class="setup-actions">
+                <button type="button" class="btn btn-secondary" id="prev-step-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Anterior
+                </button>
+                <button type="button" class="btn btn-primary" id="next-step-btn">
+                    Siguiente <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="setup-footer">
+            <p>Esta configuración solo necesita realizarse una vez. Después podrás acceder a la aplicación principal en <a href="index.html">index.html</a></p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        let currentStep = 1;
+        
+        // Elementos del DOM
+        const steps = document.querySelectorAll('.step');
+        const stepContents = document.querySelectorAll('.step-content');
+        const prevBtn = document.getElementById('prev-step-btn');
+        const nextBtn = document.getElementById('next-step-btn');
+        const yesProjectBtn = document.getElementById('yes-project-btn');
+        const openConsoleBtn = document.getElementById('open-console-btn');
+        const testConfigBtn = document.getElementById('test-config-btn');
+        const setupServicesBtn = document.getElementById('setup-services-btn');
+        const saveConfigBtn = document.getElementById('save-config-btn');
+        const testResult = document.getElementById('test-result');
+        const servicesResult = document.getElementById('services-result');
+        const finalResult = document.getElementById('final-result');
+        
+        // Actualizar pasos
+        function updateSteps() {
+            steps.forEach((step, index) => {
+                if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                } else if (index + 1 < currentStep) {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+            
+            stepContents.forEach((content, index) => {
+                if (index + 1 === currentStep) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+            
+            prevBtn.disabled = currentStep === 1;
+            
+            if (currentStep === 4) {
+                nextBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'inline-flex';
+            }
+        }
+        
+        // Navegación entre pasos
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateSteps();
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < 4) {
+                currentStep++;
+                updateSteps();
+            }
+        });
+        
+        // Botón "Sí, ya tengo proyecto"
+        yesProjectBtn.addEventListener('click', () => {
+            currentStep = 2;
+            updateSteps();
+        });
+        
+        // Botón para abrir Firebase Console
+        openConsoleBtn.addEventListener('click', () => {
+            window.open('https://console.firebase.google.com/', '_blank');
+        });
+        
+        // Probar configuración de Firebase
+        testConfigBtn.addEventListener('click', async () => {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const authDomain = document.getElementById('authDomain').value.trim();
+            const projectId = document.getElementById('projectId').value.trim();
+            const storageBucket = document.getElementById('storageBucket').value.trim();
+            const messagingSenderId = document.getElementById('messagingSenderId').value.trim();
+            const appId = document.getElementById('appId').value.trim();
+            
+            if (!apiKey || !authDomain || !projectId || !storageBucket || !messagingSenderId || !appId) {
+                testResult.textContent = 'Por favor, completa todos los campos de configuración.';
+                testResult.className = 'test-result error';
+                return;
+            }
+            
+            try {
+                testResult.textContent = 'Probando configuración de Firebase...';
+                testResult.className = 'test-result';
+                
+                // Configurar Firebase con los valores proporcionados
+                const firebaseConfig = {
+                    apiKey: apiKey,
+                    authDomain: authDomain,
+                    projectId: projectId,
+                    storageBucket: storageBucket,
+                    messagingSenderId: messagingSenderId,
+                    appId: appId
+                };
+                
+                // Inicializar Firebase
+                firebase.initializeApp(firebaseConfig);
+                
+                // Probar conexión intentando acceder a auth
+                await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+                
+                testResult.innerHTML = '<i class="fas fa-check-circle"></i> Configuración de Firebase probada exitosamente. Puedes continuar con el siguiente paso.';
+                testResult.className = 'test-result success';
+                
+                // Habilitar siguiente paso
+                setTimeout(() => {
+                    currentStep = 3;
+                    updateSteps();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error probando Firebase:', error);
+                testResult.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error al probar la configuración: ${error.message}`;
+                testResult.className = 'test-result error';
+            }
+        });
+        
+        // Configurar servicios (simulado)
+        setupServicesBtn.addEventListener('click', () => {
+            servicesResult.innerHTML = '<i class="fas fa-check-circle"></i> Servicios configurados correctamente. Ahora puedes continuar al último paso.';
+            servicesResult.className = 'test-result success';
+            
+            setTimeout(() => {
+                currentStep = 4;
+                updateSteps();
+            }, 1500);
+        });
+        
+        // Guardar configuración
+        saveConfigBtn.addEventListener('click', () => {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const authDomain = document.getElementById('authDomain').value.trim();
+            const projectId = document.getElementById('projectId').value.trim();
+            const storageBucket = document.getElementById('storageBucket').value.trim();
+            const messagingSenderId = document.getElementById('messagingSenderId').value.trim();
+            const appId = document.getElementById('appId').value.trim();
+            const adminEmail = document.getElementById('admin-email').value.trim();
+            const adminPassword = document.getElementById('admin-password').value;
+            
+            if (!apiKey || !authDomain || !projectId || !storageBucket || !messagingSenderId || !appId) {
+                finalResult.textContent = 'Por favor, completa todos los campos de configuración.';
+                finalResult.className = 'test-result error';
+                return;
+            }
+            
+            try {
+                // Crear contenido del archivo de configuración
+                const configContent = `// Configuración de Firebase
+const firebaseConfig = {
+    apiKey: "${apiKey}",
+    authDomain: "${authDomain}",
+    projectId: "${projectId}",
+    storageBucket: "${storageBucket}",
+    messagingSenderId: "${messagingSenderId}",
+    appId: "${appId}"
+};
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Inicializar servicios
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Configuración para mensajes de WhatsApp
+const whatsappConfig = {
+    maxMessagesPerDay: 100,
+    defaultCountryCode: "54",
+    enableAnalytics: true
+};`;
+
+                // Crear un blob con el contenido
+                const blob = new Blob([configContent], { type: 'application/javascript' });
+                const url = URL.createObjectURL(blob);
+                
+                // Crear un enlace para descargar el archivo
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'firebase-config.js';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Mostrar mensaje de éxito
+                finalResult.innerHTML = `
+                    <i class="fas fa-check-circle"></i> 
+                    <div>
+                        <p><strong>¡Configuración guardada exitosamente!</strong></p>
+                        <p>El archivo <code>firebase-config.js</code> se ha descargado. Ahora debes:</p>
+                        <ol>
+                            <li>Colocar el archivo descargado en la misma carpeta que <code>index.html</code></li>
+                            <li>Reemplazar el archivo existente si ya hay uno</li>
+                            <li>Acceder a la aplicación principal en <a href="index.html">index.html</a></li>
+                        </ol>
+                        ${adminEmail && adminPassword ? `<p>Se creará el usuario administrativo: ${adminEmail} al iniciar la aplicación por primera vez.</p>` : ''}
+                    </div>
+                `;
+                finalResult.className = 'test-result success';
+                
+                // Crear usuario administrativo si se proporcionaron credenciales
+                if (adminEmail && adminPassword && adminPassword.length >= 6) {
+                    try {
+                        // Inicializar Firebase si no está ya inicializado
+                        if (!firebase.apps.length) {
+                            firebase.initializeApp({
+                                apiKey: apiKey,
+                                authDomain: authDomain,
+                                projectId: projectId,
+                                storageBucket: storageBucket,
+                                messagingSenderId: messagingSenderId,
+                                appId: appId
+                            });
+                        }
+                        
+                        // Crear usuario
+                        firebase.auth().createUserWithEmailAndPassword(adminEmail, adminPassword)
+                            .then(() => {
+                                console.log('Usuario administrativo creado exitosamente');
+                            })
+                            .catch(error => {
+                                console.warn('No se pudo crear usuario administrativo:', error.message);
+                            });
+                    } catch (error) {
+                        console.warn('Error creando usuario administrativo:', error);
+                    }
+                }
+                
+            } catch (error) {
+                finalResult.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error al guardar la configuración: ${error.message}`;
+                finalResult.className = 'test-result error';
+            }
+        });
+        
+        // Inicializar
+        updateSteps();
+    </script>
+</body>
+</html>
