@@ -15,6 +15,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
+    <!-- Skip link para accesibilidad -->
+    <a href="#main-content" class="skip-link sr-only sr-only-focusable">Saltar al contenido principal</a>
+
     <!-- Cargador inicial -->
     <div id="loading-screen" class="loading-screen">
         <div class="spinner"></div>
@@ -34,42 +37,42 @@
             
             <div class="auth-form">
                 <div class="tabs">
-                    <button id="login-tab" class="tab active">Iniciar Sesión</button>
-                    <button id="register-tab" class="tab">Registrarse</button>
+                    <button id="login-tab" class="tab active" type="button" aria-controls="login-form">Iniciar Sesión</button>
+                    <button id="register-tab" class="tab" type="button" aria-controls="register-form">Registrarse</button>
                 </div>
                 
-                <form id="login-form">
+                <form id="login-form" aria-labelledby="login-tab">
                     <div class="form-group">
-                        <label for="email">Correo electrónico</label>
-                        <input type="email" id="login-email" placeholder="tu@email.com" required>
+                        <label for="login-email">Correo electrónico</label>
+                        <input type="email" id="login-email" placeholder="tu@email.com" required aria-required="true">
                     </div>
                     <div class="form-group">
-                        <label for="password">Contraseña</label>
-                        <input type="password" id="login-password" placeholder="Tu contraseña" required>
+                        <label for="login-password">Contraseña</label>
+                        <input type="password" id="login-password" placeholder="Tu contraseña" required aria-required="true">
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">
                         <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                     </button>
-                    <p class="auth-error" id="login-error"></p>
+                    <p class="auth-error" id="login-error" role="alert"></p>
                 </form>
                 
-                <form id="register-form" style="display: none;">
+                <form id="register-form" style="display: none;" aria-labelledby="register-tab">
                     <div class="form-group">
-                        <label for="email">Correo electrónico</label>
-                        <input type="email" id="register-email" placeholder="tu@email.com" required>
+                        <label for="register-email">Correo electrónico</label>
+                        <input type="email" id="register-email" placeholder="tu@email.com" required aria-required="true">
                     </div>
                     <div class="form-group">
-                        <label for="password">Contraseña (mínimo 6 caracteres)</label>
-                        <input type="password" id="register-password" placeholder="Crea una contraseña" required minlength="6">
+                        <label for="register-password">Contraseña (mínimo 6 caracteres)</label>
+                        <input type="password" id="register-password" placeholder="Crea una contraseña" required minlength="6" aria-required="true">
                     </div>
                     <div class="form-group">
                         <label for="confirm-password">Confirmar contraseña</label>
-                        <input type="password" id="confirm-password" placeholder="Repite tu contraseña" required minlength="6">
+                        <input type="password" id="confirm-password" placeholder="Repite tu contraseña" required minlength="6" aria-required="true">
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">
                         <i class="fas fa-user-plus"></i> Crear Cuenta
                     </button>
-                    <p class="auth-error" id="register-error"></p>
+                    <p class="auth-error" id="register-error" role="alert"></p>
                 </form>
                 
                 <div class="auth-footer">
@@ -119,7 +122,7 @@
         </header>
 
         <!-- Contenido principal -->
-        <main class="app-main">
+        <main id="main-content" class="app-main">
             <!-- Panel de control -->
             <section id="dashboard-section" class="content-section active">
                 <div class="section-header">
@@ -288,21 +291,21 @@
         </main>
 
         <!-- Modal para nueva plantilla -->
-        <div id="template-modal" class="modal">
+        <div id="template-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="template-modal-title">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fas fa-file-alt"></i> Nueva Plantilla</h3>
-                    <span class="close-modal">&times;</span>
+                    <h3 id="template-modal-title"><i class="fas fa-file-alt"></i> Nueva Plantilla</h3>
+                    <button type="button" class="close-modal" aria-label="Cerrar">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form id="template-form">
                         <div class="form-group">
                             <label for="template-name">Nombre de la plantilla</label>
-                            <input type="text" id="template-name" placeholder="Ej: Promoción de verano" required>
+                            <input type="text" id="template-name" placeholder="Ej: Promoción de verano" required aria-required="true">
                         </div>
                         <div class="form-group">
                             <label for="template-category">Categoría</label>
-                            <select id="template-category" required>
+                            <select id="template-category" required aria-required="true">
                                 <option value="">Seleccionar categoría</option>
                                 <option value="promocion">Promoción</option>
                                 <option value="recordatorio">Recordatorio</option>
@@ -313,18 +316,20 @@
                         </div>
                         <div class="form-group">
                             <label for="template-content">Contenido del mensaje</label>
-                            <textarea id="template-content" rows="8" placeholder="Escribe tu mensaje aquí. Puedes usar variables como {{nombre}}, {{servicio}}, {{fecha}}..." required></textarea>
+                            <textarea id="template-content" rows="8" placeholder="Escribe tu mensaje aquí. Puedes usar variables como {{nombre}}, {{servicio}}, {{fecha}}..." required aria-required="true"></textarea>
                             <div class="variables-hint">
-                                <p>Variables disponibles: <span class="variable-tag" data-variable="{{nombre}}">{{nombre}}</span> 
-                                <span class="variable-tag" data-variable="{{servicio}}">{{servicio}}</span> 
-                                <span class="variable-tag" data-variable="{{fecha}}">{{fecha}}</span> 
-                                <span class="variable-tag" data-variable="{{precio}}">{{precio}}</span></p>
+                                <p>Variables disponibles: 
+                                    <button type="button" class="variable-tag" data-variable="{{nombre}}" aria-label="Insertar variable nombre">{{nombre}}</button>
+                                    <button type="button" class="variable-tag" data-variable="{{servicio}}" aria-label="Insertar variable servicio">{{servicio}}</button>
+                                    <button type="button" class="variable-tag" data-variable="{{fecha}}" aria-label="Insertar variable fecha">{{fecha}}</button>
+                                    <button type="button" class="variable-tag" data-variable="{{precio}}" aria-label="Insertar variable precio">{{precio}}</button>
+                                </p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="template-image">Imagen (opcional)</label>
-                            <input type="text" id="template-image" placeholder="URL de la imagen (ej: https://ejemplo.com/imagen.jpg)">
-                            <small>Usa una URL pública de imagen para incluir en el mensaje</small>
+                            <input type="url" id="template-image" placeholder="URL de la imagen (ej: https://ejemplo.com/imagen.jpg)" aria-describedby="template-image-help">
+                            <small id="template-image-help">Usa una URL pública de imagen para incluir en el mensaje</small>
                         </div>
                         <div class="form-actions">
                             <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
@@ -336,22 +341,22 @@
         </div>
 
         <!-- Modal para nuevo contacto -->
-        <div id="contact-modal" class="modal">
+        <div id="contact-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fas fa-user-plus"></i> Nuevo Contacto</h3>
-                    <span class="close-modal">&times;</span>
+                    <h3 id="contact-modal-title"><i class="fas fa-user-plus"></i> Nuevo Contacto</h3>
+                    <button type="button" class="close-modal" aria-label="Cerrar">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form id="contact-form">
                         <div class="form-group">
                             <label for="contact-name">Nombre del contacto</label>
-                            <input type="text" id="contact-name" placeholder="Ej: Juan Pérez" required>
+                            <input type="text" id="contact-name" placeholder="Ej: Juan Pérez" required aria-required="true">
                         </div>
                         <div class="form-group">
                             <label for="contact-phone">Número de teléfono (WhatsApp)</label>
-                            <input type="tel" id="contact-phone" placeholder="Ej: 5491122334455" required>
-                            <small>Ingresa el número completo con código de país, sin el signo +</small>
+                            <input type="tel" id="contact-phone" placeholder="Ej: 5491122334455" required aria-required="true" aria-describedby="contact-phone-help">
+                            <small id="contact-phone-help">Ingresa el número completo con código de país, sin el signo +</small>
                         </div>
                         <div class="form-group">
                             <label for="contact-group">Grupo (opcional)</label>
@@ -377,27 +382,27 @@
         </div>
 
         <!-- Modal para nueva campaña -->
-        <div id="campaign-modal" class="modal">
+        <div id="campaign-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="campaign-modal-title">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fas fa-bullhorn"></i> Nueva Campaña</h3>
-                    <span class="close-modal">&times;</span>
+                    <h3 id="campaign-modal-title"><i class="fas fa-bullhorn"></i> Nueva Campaña</h3>
+                    <button type="button" class="close-modal" aria-label="Cerrar">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form id="campaign-form">
                         <div class="form-group">
                             <label for="campaign-name">Nombre de la campaña</label>
-                            <input type="text" id="campaign-name" placeholder="Ej: Lanzamiento de nuevo servicio" required>
+                            <input type="text" id="campaign-name" placeholder="Ej: Lanzamiento de nuevo servicio" required aria-required="true">
                         </div>
                         <div class="form-group">
                             <label for="campaign-template">Plantilla a utilizar</label>
-                            <select id="campaign-template" required>
+                            <select id="campaign-template" required aria-required="true">
                                 <option value="">Seleccionar plantilla</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="campaign-contacts">Contactos a enviar</label>
-                            <select id="campaign-contacts" required>
+                            <select id="campaign-contacts" required aria-required="true">
                                 <option value="">Seleccionar grupo de contactos</option>
                                 <option value="all">Todos los contactos</option>
                                 <option value="clientes">Solo clientes</option>
@@ -405,20 +410,23 @@
                                 <option value="custom">Selección personalizada</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Programar envío</label>
+                        <fieldset class="form-group">
+                            <legend>Programar envío</legend>
                             <div class="radio-group">
-                                <label>
-                                    <input type="radio" name="schedule" value="now" checked> Enviar ahora
-                                </label>
-                                <label>
-                                    <input type="radio" name="schedule" value="later"> Programar para después
-                                </label>
+                                <div class="radio-option">
+                                    <input type="radio" id="schedule-now" name="schedule" value="now" checked>
+                                    <label for="schedule-now">Enviar ahora</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="schedule-later" name="schedule" value="later">
+                                    <label for="schedule-later">Programar para después</label>
+                                </div>
                             </div>
                             <div id="schedule-datetime" style="display: none; margin-top: 10px;">
+                                <label for="campaign-datetime">Fecha y hora programada</label>
                                 <input type="datetime-local" id="campaign-datetime">
                             </div>
-                        </div>
+                        </fieldset>
                         <div class="form-actions">
                             <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
                             <button type="submit" class="btn btn-primary">Crear Campaña</button>
@@ -429,11 +437,11 @@
         </div>
 
         <!-- Modal de vista previa de mensaje -->
-        <div id="preview-modal" class="modal">
+        <div id="preview-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="preview-modal-title">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fab fa-whatsapp"></i> Vista Previa del Mensaje</h3>
-                    <span class="close-modal">&times;</span>
+                    <h3 id="preview-modal-title"><i class="fab fa-whatsapp"></i> Vista Previa del Mensaje</h3>
+                    <button type="button" class="close-modal" aria-label="Cerrar">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="whatsapp-preview">
@@ -474,11 +482,11 @@
         </div>
 
         <!-- Términos y condiciones -->
-        <div id="terms-modal" class="modal">
+        <div id="terms-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="terms-modal-title">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fas fa-file-contract"></i> Términos y Condiciones</h3>
-                    <span class="close-modal">&times;</span>
+                    <h3 id="terms-modal-title"><i class="fas fa-file-contract"></i> Términos y Condiciones</h3>
+                    <button type="button" class="close-modal" aria-label="Cerrar">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="terms-content">
@@ -503,7 +511,7 @@
         </div>
 
         <!-- Toast de notificaciones -->
-        <div id="toast" class="toast">
+        <div id="toast" class="toast" role="status" aria-live="polite">
             <div class="toast-content">
                 <i class="fas fa-check-circle toast-icon"></i>
                 <p class="toast-message">Operación realizada con éxito</p>
