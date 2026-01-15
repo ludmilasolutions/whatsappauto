@@ -40,6 +40,9 @@ function initApp() {
     
     // Inicializar eventos
     initEvents();
+    
+    // Inicializar accesibilidad
+    initAccessibility();
 }
 
 // Mostrar pantalla de autenticación
@@ -169,13 +172,13 @@ function renderTemplates() {
             <div class="template-footer">
                 <span class="template-date">${formatDate(template.createdAt?.toDate())}</span>
                 <div class="template-actions">
-                    <button class="btn-icon preview-template" data-id="${template.id}" title="Vista previa">
+                    <button class="btn-icon preview-template" data-id="${template.id}" title="Vista previa" aria-label="Vista previa de plantilla ${template.name}">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-icon edit-template" data-id="${template.id}" title="Editar">
+                    <button class="btn-icon edit-template" data-id="${template.id}" title="Editar" aria-label="Editar plantilla ${template.name}">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn-icon delete-template" data-id="${template.id}" title="Eliminar">
+                    <button class="btn-icon delete-template" data-id="${template.id}" title="Eliminar" aria-label="Eliminar plantilla ${template.name}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -257,13 +260,13 @@ function renderContacts() {
                 ${contact.notes ? `<p class="contact-notes">${contact.notes.substring(0, 50)}${contact.notes.length > 50 ? '...' : ''}</p>` : ''}
             </div>
             <div class="contact-actions">
-                <button class="btn-icon send-message" data-id="${contact.id}" title="Enviar mensaje">
+                <button class="btn-icon send-message" data-id="${contact.id}" title="Enviar mensaje" aria-label="Enviar mensaje a ${contact.name}">
                     <i class="fab fa-whatsapp"></i>
                 </button>
-                <button class="btn-icon edit-contact" data-id="${contact.id}" title="Editar">
+                <button class="btn-icon edit-contact" data-id="${contact.id}" title="Editar" aria-label="Editar contacto ${contact.name}">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-icon delete-contact" data-id="${contact.id}" title="Eliminar">
+                <button class="btn-icon delete-contact" data-id="${contact.id}" title="Eliminar" aria-label="Eliminar contacto ${contact.name}">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -313,6 +316,7 @@ function renderCampaigns() {
         
         document.getElementById('empty-campaign-btn')?.addEventListener('click', () => {
             openModal('campaign-modal');
+            populateCampaignTemplates();
         });
         return;
     }
@@ -330,7 +334,7 @@ function renderCampaigns() {
             <div class="campaign-info">
                 <p><i class="fas fa-file-alt"></i> Plantilla: ${getTemplateName(campaign.templateId)}</p>
                 <p><i class="fas fa-users"></i> Contactos: ${campaign.contactsCount || 0}</p>
-                <p><i class="fas fa-calendar"></i> Programada: ${formatDate(campaign.scheduledAt?.toDate())}</p>
+                <p><i class="fas fa-calendar"></i> Programada: ${campaign.schedule === 'now' ? 'Enviar ahora' : formatDate(campaign.scheduledAt?.toDate())}</p>
             </div>
             <div class="campaign-footer">
                 <div class="campaign-progress">
@@ -340,13 +344,13 @@ function renderCampaigns() {
                     <span>${campaign.progress || 0}% completado</span>
                 </div>
                 <div class="campaign-actions">
-                    <button class="btn-icon view-campaign" data-id="${campaign.id}" title="Ver detalles">
+                    <button class="btn-icon view-campaign" data-id="${campaign.id}" title="Ver detalles" aria-label="Ver detalles de campaña ${campaign.name}">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-icon pause-campaign" data-id="${campaign.id}" title="${campaign.status === 'active' ? 'Pausar' : 'Reanudar'}">
-                        <i class="fas fa-${campaign.status === 'active' ? 'pause' : 'play'}"></i>
+                    <button class="btn-icon pause-campaign" data-id="${campaign.id}" title="${campaign.status === 'active' ? 'Pausar' : 'Reanudar'}" aria-label="${campaign.status === 'active' ? 'Pausar campaña' : 'Reanudar campaña'}">
+                        <i class="fas fa-${campaign.status === 'active' || campaign.status === 'scheduled' ? 'pause' : 'play'}"></i>
                     </button>
-                    <button class="btn-icon delete-campaign" data-id="${campaign.id}" title="Eliminar">
+                    <button class="btn-icon delete-campaign" data-id="${campaign.id}" title="Eliminar" aria-label="Eliminar campaña ${campaign.name}">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -373,6 +377,9 @@ function initEvents() {
     
     // Botones de acción rápida
     initQuickActionEvents();
+    
+    // Campañas
+    initCampaignEvents();
     
     // Búsqueda de contactos
     const contactSearch = document.getElementById('contact-search');
@@ -728,12 +735,358 @@ function initQuickActionEvents() {
     document.getElementById('send-test-btn')?.addEventListener('click', sendTestMessage);
 }
 
+// Funciones específicas para campañas
+function initCampaignEvents() {
+    // Delegación de eventos para botones de campañas
+    document.addEventListener('click', function(e) {
+        // Ver campaña
+        if (e.target.closest('.view-campaign')) {
+            const button = e.target.closest('.view-campaign');
+            const campaignId = button.getAttribute('data-id');
+            viewCampaign(campaignId);
+            return;
+        }
+        
+        // Pausar/reanudar campaña
+        if (e.target.closest('.pause-campaign')) {
+            const button = e.target.closest('.pause-campaign');
+            const campaignId = button.getAttribute('data-id');
+            toggleCampaignStatus(campaignId);
+            return;
+        }
+        
+        // Eliminar campaña
+        if (e.target.closest('.delete-campaign')) {
+            const button = e.target.closest('.delete-campaign');
+            const campaignId = button.getAttribute('data-id');
+            deleteCampaign(campaignId);
+            return;
+        }
+    });
+}
+
+// Ver detalles de campaña
+function viewCampaign(campaignId) {
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (!campaign) {
+        showToast('Campaña no encontrada', 'error');
+        return;
+    }
+    
+    // Obtener la plantilla asociada
+    const template = templates.find(t => t.id === campaign.templateId);
+    const templateName = template ? template.name : 'Plantilla no encontrada';
+    
+    // Obtener contactos de la campaña
+    let contactList = [];
+    if (campaign.contactIds && campaign.contactIds.length > 0) {
+        contactList = contacts.filter(contact => campaign.contactIds.includes(contact.id));
+    } else if (campaign.contactGroup) {
+        if (campaign.contactGroup === 'all') {
+            contactList = contacts;
+        } else {
+            contactList = contacts.filter(contact => contact.group === campaign.contactGroup);
+        }
+    }
+    
+    // Crear contenido del modal
+    const modalContent = `
+        <div class="modal" id="campaign-detail-modal" style="display:block">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>${campaign.name}</h3>
+                    <button type="button" class="close-modal" aria-label="Cerrar">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="campaign-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Estado:</span>
+                            <span class="detail-value status-badge ${campaign.status}">${getStatusName(campaign.status)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Plantilla:</span>
+                            <span class="detail-value">${templateName}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Contactos:</span>
+                            <span class="detail-value">${contactList.length} contactos</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Creada:</span>
+                            <span class="detail-value">${formatDate(campaign.createdAt?.toDate())}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Programada:</span>
+                            <span class="detail-value">${campaign.schedule === 'now' ? 'Enviar inmediatamente' : formatDate(campaign.scheduledAt?.toDate())}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Progreso:</span>
+                            <div class="detail-value">
+                                <div class="progress-bar" style="width: 200px; display: inline-block; margin-right: 10px;">
+                                    <div class="progress-fill" style="width: ${campaign.progress || 0}%"></div>
+                                </div>
+                                ${campaign.progress || 0}%
+                            </div>
+                        </div>
+                        
+                        <h4 style="margin-top: 20px;">Contactos en esta campaña:</h4>
+                        <div class="contacts-preview" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
+                            ${contactList.length > 0 ? 
+                                contactList.map(contact => `
+                                    <div class="contact-preview-item" style="display: flex; align-items: center; padding: 8px; border-bottom: 1px solid #eee;">
+                                        <div class="contact-avatar-small" style="width: 30px; height: 30px; border-radius: 50%; background-color: #25D366; color: white; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                            ${contact.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <div>${contact.name}</div>
+                                            <small style="color: #666;">+${contact.phone}</small>
+                                        </div>
+                                    </div>
+                                `).join('') 
+                                : '<p>No hay contactos en esta campaña.</p>'
+                            }
+                        </div>
+                        
+                        ${template ? `
+                        <h4 style="margin-top: 20px;">Vista previa del mensaje:</h4>
+                        <div class="message-preview" style="background-color: #f5f5f5; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                            <p style="white-space: pre-wrap;">${template.content}</p>
+                            ${template.image ? `<img src="${template.image}" alt="Imagen de plantilla" style="max-width: 100%; border-radius: 5px; margin-top: 10px;">` : ''}
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary close-campaign-detail">Cerrar</button>
+                    ${campaign.status === 'scheduled' || campaign.status === 'paused' ? 
+                        `<button type="button" class="btn btn-primary start-campaign-btn" data-id="${campaign.id}">Iniciar Campaña</button>` : 
+                        ''
+                    }
+                    ${campaign.status === 'active' ? 
+                        `<button type="button" class="btn btn-warning pause-campaign-btn" data-id="${campaign.id}">Pausar Campaña</button>` : 
+                        ''
+                    }
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Insertar el modal en el DOM
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalContent;
+    document.body.appendChild(modalContainer.firstElementChild);
+    
+    // Agregar eventos para los botones del modal
+    const modal = document.getElementById('campaign-detail-modal');
+    
+    // Cerrar modal
+    modal.querySelector('.close-modal').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    modal.querySelector('.close-campaign-detail').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    // Cerrar al hacer clic fuera del modal
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    // Iniciar campaña
+    const startBtn = modal.querySelector('.start-campaign-btn');
+    if (startBtn) {
+        startBtn.addEventListener('click', async function() {
+            const campaignId = this.getAttribute('data-id');
+            await startCampaign(campaignId);
+            modal.remove();
+        });
+    }
+    
+    // Pausar campaña
+    const pauseBtn = modal.querySelector('.pause-campaign-btn');
+    if (pauseBtn) {
+        pauseBtn.addEventListener('click', async function() {
+            const campaignId = this.getAttribute('data-id');
+            await toggleCampaignStatus(campaignId);
+            modal.remove();
+        });
+    }
+}
+
+// Iniciar campaña
+async function startCampaign(campaignId) {
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (!campaign) {
+        showToast('Campaña no encontrada', 'error');
+        return;
+    }
+    
+    try {
+        await db.collection('campaigns').doc(campaignId).update({
+            status: 'active',
+            startedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        showToast('Campaña iniciada correctamente', 'success');
+        
+        // Simular progreso de envío (en una app real, esto se haría con un proceso en el servidor)
+        simulateCampaignProgress(campaignId);
+        
+        await loadUserData();
+    } catch (error) {
+        console.error('Error iniciando campaña:', error);
+        showToast('Error al iniciar la campaña', 'error');
+    }
+}
+
+// Alternar estado de campaña (pausar/reanudar)
+async function toggleCampaignStatus(campaignId) {
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (!campaign) {
+        showToast('Campaña no encontrada', 'error');
+        return;
+    }
+    
+    const newStatus = campaign.status === 'active' ? 'paused' : 'active';
+    const action = newStatus === 'active' ? 'reanudada' : 'pausada';
+    
+    try {
+        await db.collection('campaigns').doc(campaignId).update({
+            status: newStatus,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        showToast(`Campaña ${action} correctamente`, 'success');
+        await loadUserData();
+    } catch (error) {
+        console.error(`Error ${action} campaña:`, error);
+        showToast(`Error al ${action} la campaña`, 'error');
+    }
+}
+
+// Eliminar campaña
+async function deleteCampaign(campaignId) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta campaña? Esta acción no se puede deshacer.')) {
+        return;
+    }
+    
+    try {
+        await db.collection('campaigns').doc(campaignId).delete();
+        showToast('Campaña eliminada correctamente', 'success');
+        await loadUserData();
+    } catch (error) {
+        console.error('Error eliminando campaña:', error);
+        showToast('Error al eliminar la campaña', 'error');
+    }
+}
+
+// Simular progreso de campaña (para demostración)
+function simulateCampaignProgress(campaignId) {
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (!campaign) return;
+    
+    let progress = campaign.progress || 0;
+    
+    const interval = setInterval(async () => {
+        progress += 10;
+        
+        // Actualizar en Firebase
+        try {
+            await db.collection('campaigns').doc(campaignId).update({
+                progress: Math.min(progress, 100),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Si llegó al 100%, marcar como completada
+            if (progress >= 100) {
+                clearInterval(interval);
+                await db.collection('campaigns').doc(campaignId).update({
+                    status: 'completed',
+                    completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showToast('Campaña completada', 'success');
+            }
+            
+            // Actualizar datos locales
+            await loadUserData();
+        } catch (error) {
+            console.error('Error actualizando progreso:', error);
+            clearInterval(interval);
+        }
+    }, 2000); // Actualizar cada 2 segundos
+}
+
+// Funciones de accesibilidad adicionales
+function initAccessibility() {
+    // Enfocar el primer elemento del modal al abrir
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('shown', () => {
+            const firstFocusable = modal.querySelector('input, select, textarea, button');
+            if (firstFocusable) {
+                firstFocusable.focus();
+            }
+        });
+    });
+    
+    // Manejar cierre de modales con Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeAllModals();
+        }
+    });
+    
+    // Mejorar navegación por teclado en modales
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab' && document.querySelector('.modal[style*="display: block"]')) {
+            const modal = document.querySelector('.modal[style*="display: block"]');
+            const focusableElements = modal.querySelectorAll('input, select, textarea, button, [href]');
+            const firstFocusable = focusableElements[0];
+            const lastFocusable = focusableElements[focusableElements.length - 1];
+            
+            if (e.shiftKey) {
+                if (document.activeElement === firstFocusable) {
+                    lastFocusable.focus();
+                    e.preventDefault();
+                }
+            } else {
+                if (document.activeElement === lastFocusable) {
+                    firstFocusable.focus();
+                    e.preventDefault();
+                }
+            }
+        }
+    });
+    
+    // Agregar atributos ARIA a los botones de acción
+    document.querySelectorAll('.btn-icon').forEach(btn => {
+        const title = btn.getAttribute('title');
+        if (title) {
+            btn.setAttribute('aria-label', title);
+        }
+    });
+}
+
 // Abrir modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
+        
+        // Enfocar el primer elemento del modal
+        setTimeout(() => {
+            const firstFocusable = modal.querySelector('input, select, textarea, button');
+            if (firstFocusable) {
+                firstFocusable.focus();
+            }
+        }, 100);
     }
 }
 
@@ -1212,4 +1565,25 @@ function formatDate(date) {
         hour: '2-digit',
         minute: '2-digit'
     });
+}
+
+// Función para depurar eventos de campaña
+function debugCampaignEvents() {
+    console.log('=== DEPURACIÓN DE CAMPAÑAS ===');
+    console.log('Total campañas:', campaigns.length);
+    console.log('Campañas:', campaigns);
+    
+    // Verificar que los botones existen y tienen eventos
+    setTimeout(() => {
+        const viewButtons = document.querySelectorAll('.view-campaign');
+        const pauseButtons = document.querySelectorAll('.pause-campaign');
+        
+        console.log('Botones "Ver campaña" encontrados:', viewButtons.length);
+        console.log('Botones "Pausar/Reanudar" encontrados:', pauseButtons.length);
+        
+        // Verificar que los botones tienen data-id
+        viewButtons.forEach((btn, i) => {
+            console.log(`Botón ${i} data-id:`, btn.getAttribute('data-id'));
+        });
+    }, 1000);
 }
