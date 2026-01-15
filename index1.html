@@ -1,0 +1,758 @@
+<!-- =============================== -->
+<!-- INDEX 1 – RESTAURANTE GOURMET -->
+<!-- =============================== -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bistró Lumière - Carta Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f8f5f2;
+            color: #2c2c2c;
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-bottom: 80px;
+            background-image: url('https://picsum.photos/seed/gourmet1/500/300?grayscale');
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 2rem 1rem 1.5rem;
+            background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
+            color: #e8d8c3;
+            border-bottom: 4px solid #c19a6b;
+        }
+        
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .slogan {
+            font-size: 1rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .qr-instruction {
+            background: #c19a6b;
+            color: #1a1a1a;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-weight: 500;
+            margin: 0 auto;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .qr-instruction i {
+            font-style: normal;
+            font-size: 1.2rem;
+        }
+        
+        /* Navegación categorías */
+        .categories {
+            display: flex;
+            overflow-x: auto;
+            padding: 1rem;
+            gap: 0.5rem;
+            background: #f1ece4;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            scrollbar-width: none;
+        }
+        
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category-btn {
+            padding: 0.7rem 1.5rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            white-space: nowrap;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .category-btn.active {
+            background: #c19a6b;
+            color: white;
+            border-color: #c19a6b;
+        }
+        
+        /* Productos */
+        .menu-section {
+            padding: 1.5rem 1rem;
+            display: none;
+        }
+        
+        .menu-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e0d6c9;
+            color: #3a3a3a;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .product-img {
+            height: 180px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .product-info {
+            padding: 1.2rem;
+        }
+        
+        .product-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2c2c2c;
+        }
+        
+        .product-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .product-price {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #c19a6b;
+        }
+        
+        .add-btn {
+            background: #2c2c2c;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .add-btn:hover {
+            background: #c19a6b;
+        }
+        
+        /* Carrito flotante */
+        .cart-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 1rem;
+            background: #c19a6b;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 6px 20px rgba(193, 154, 107, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .cart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(193, 154, 107, 0.6);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #2c2c2c;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Modal carrito */
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.4s ease;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cart-modal.active {
+            right: 0;
+        }
+        
+        .cart-header {
+            background: #2c2c2c;
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .cart-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .cart-items {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .cart-item-price {
+            color: #c19a6b;
+            font-weight: 600;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .quantity-btn {
+            background: #f5f5f5;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-total {
+            padding: 1.5rem;
+            background: #f8f5f2;
+            border-top: 1px solid #e0d6c9;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .send-whatsapp {
+            background: #25D366;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .send-whatsapp:hover {
+            background: #128C7E;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1500;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* Responsive */
+        @media (max-width: 500px) {
+            .cart-modal {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">Bistró Lumière</div>
+            <div class="slogan">Alta cocina francesa contemporánea</div>
+            <div class="qr-instruction">
+                <i>📱</i> Escaneá el QR y pedí desde tu mesa
+            </div>
+        </header>
+        
+        <!-- Navegación categorías -->
+        <nav class="categories">
+            <button class="category-btn active" data-category="entradas">Entradas</button>
+            <button class="category-btn" data-category="principales">Platos Principales</button>
+            <button class="category-btn" data-category="postres">Postres</button>
+            <button class="category-btn" data-category="vinos">Vinos & Bebidas</button>
+        </nav>
+        
+        <!-- Sección Entradas -->
+        <section id="entradas" class="menu-section active">
+            <h2 class="section-title">Entradas</h2>
+            
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://picsum.photos/seed/entrada1/500/300')"></div>
+                <div class="product-info">
+                    <h3 class="product-name">Foie Gras Mi-Cuit</h3>
+                    <p class="product-desc">Terrina de hígado de pato con reducción de Oporto y compota de higos, acompañado de pan brioche tostado.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$3.850</div>
+                        <button class="add-btn" data-id="1" data-name="Foie Gras Mi-Cuit" data-price="3850">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://picsum.photos/seed/entrada2/500/300')"></div>
+                <div class="product-info">
+                    <h3 class="product-name">Tartar de Atún Rojo</h3>
+                    <p class="product-desc">Atún rojo de almadraba, aguacate, salsa de soja trufada y chips de taro.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$3.250</div>
+                        <button class="add-btn" data-id="2" data-name="Tartar de Atún Rojo" data-price="3250">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://picsum.photos/seed/entrada3/500/300')"></div>
+                <div class="product-info">
+                    <h3 class="product-name">Carpaccio de Remolacha</h3>
+                    <p class="product-desc">Láminas de remolacha amarilla y roja, queso de cabra, nueces tostadas y vinagreta de miel.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$2.950</div>
+                        <button class="add-btn" data-id="3" data-name="Carpaccio de Remolacha" data-price="2950">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sección Platos Principales -->
+        <section id="principales" class="menu-section">
+            <h2 class="section-title">Platos Principales</h2>
+            
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://picsum.photos/seed/principal1/500/300')"></div>
+                <div class="product-info">
+                    <h3 class="product-name">Solomillo de Ternera</h3>
+                    <p class="product-desc">Solomillo Angus 250g, puré de papas trufado, espárragos verdes y reducción de vino tinto.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$6.950</div>
+                        <button class="add-btn" data-id="4" data-name="Solomillo de Ternera" data-price="6950">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://picsum.photos/seed/principal2/500/300')"></div>
+                <div class="product-info">
+                    <h3 class="product-name">Risotto de Langosta</h3>
+                    <p class="product-desc">Arroz carnaroli, medallones de langosta, azafrán y queso parmesano 24 meses.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$7.450</div>
+                        <button class="add-btn" data-id="5" data-name="Risotto de Langosta" data-price="7450">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sección Postres -->
+        <section id="postres" class="menu-section">
+            <h2 class="section-title">Postres</h2>
+            
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://picsum.photos/seed/postre1/500/300')"></div>
+                <div class="product-info">
+                    <h3 class="product-name">Soufflé de Chocolate Valthona</h3>
+                    <p class="product-desc">Soufflé caliente de chocolate 70% con centro fundido, helado de vainilla de Madagascar.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$2.850</div>
+                        <button class="add-btn" data-id="6" data-name="Soufflé de Chocolate" data-price="2850">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sección Vinos & Bebidas -->
+        <section id="vinos" class="menu-section">
+            <h2 class="section-title">Vinos & Bebidas</h2>
+            
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://picsum.photos/seed/vino1/500/300')"></div>
+                <div class="product-info">
+                    <h3 class="product-name">Catena Zapata Malbec</h3>
+                    <p class="product-desc">Mendoza 2019 - Cuerpo medio, notas de frutos rojos y especias suaves.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$8.500</div>
+                        <button class="add-btn" data-id="7" data-name="Catena Zapata Malbec" data-price="8500">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-img" style="background-image: url('https://picsum.photos/seed/vino2/500/300')"></div>
+                <div class="product-info">
+                    <h3 class="product-name">Agua Mineral con Gas</h3>
+                    <p class="product-desc">Botella 750ml - Agua mineral natural con gas de los Alpes.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$950</div>
+                        <button class="add-btn" data-id="8" data-name="Agua Mineral con Gas" data-price="950">Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Botón carrito flotante -->
+        <div class="cart-btn">
+            <span>🛒</span>
+            <span class="cart-count">0</span>
+        </div>
+        
+        <!-- Modal carrito -->
+        <div class="cart-modal">
+            <div class="cart-header">
+                <h3 class="cart-title">Tu Pedido</h3>
+                <button class="close-cart">✕</button>
+            </div>
+            
+            <div class="cart-items">
+                <!-- Los items del carrito se insertan aquí dinámicamente -->
+            </div>
+            
+            <div class="cart-total">
+                <div class="total-row">
+                    <span>Total:</span>
+                    <span class="total-price">$0</span>
+                </div>
+                <button class="send-whatsapp">
+                    <span>📱</span> Enviar pedido por WhatsApp
+                </button>
+            </div>
+        </div>
+        
+        <!-- Overlay para modal -->
+        <div class="overlay"></div>
+    </div>
+
+    <script>
+        // Variables globales
+        let cart = [];
+        const whatsappNumber = "5491112345678"; // Número ficticio Argentina
+        
+        // Elementos DOM
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const menuSections = document.querySelectorAll('.menu-section');
+        const addButtons = document.querySelectorAll('.add-btn');
+        const cartBtn = document.querySelector('.cart-btn');
+        const cartModal = document.querySelector('.cart-modal');
+        const closeCartBtn = document.querySelector('.close-cart');
+        const overlay = document.querySelector('.overlay');
+        const cartItemsContainer = document.querySelector('.cart-items');
+        const cartCount = document.querySelector('.cart-count');
+        const totalPriceElement = document.querySelector('.total-price');
+        const sendWhatsAppBtn = document.querySelector('.send-whatsapp');
+        
+        // Cambiar categorías
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const category = button.getAttribute('data-category');
+                
+                // Actualizar botones activos
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Mostrar sección correspondiente
+                menuSections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === category) {
+                        section.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // Agregar productos al carrito
+        addButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const id = parseInt(button.getAttribute('data-id'));
+                const name = button.getAttribute('data-name');
+                const price = parseInt(button.getAttribute('data-price'));
+                
+                addToCart(id, name, price);
+                updateCartUI();
+                
+                // Feedback visual
+                button.textContent = '✓ Agregado';
+                button.style.background = '#4CAF50';
+                setTimeout(() => {
+                    button.textContent = 'Agregar';
+                    button.style.background = '';
+                }, 1500);
+            });
+        });
+        
+        // Función para agregar al carrito
+        function addToCart(id, name, price) {
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id,
+                    name,
+                    price,
+                    quantity: 1
+                });
+            }
+        }
+        
+        // Actualizar interfaz del carrito
+        function updateCartUI() {
+            // Actualizar contador
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Actualizar items en el modal
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">Tu carrito está vacío</p>';
+                totalPriceElement.textContent = '$0';
+                return;
+            }
+            
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'cart-item';
+                itemElement.innerHTML = `
+                    <div class="cart-item-info">
+                        <h4>${item.name}</h4>
+                        <div class="cart-item-price">$${item.price}</div>
+                    </div>
+                    <div class="cart-item-actions">
+                        <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                        <span style="font-weight: 600;">${item.quantity}</span>
+                        <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(itemElement);
+            });
+            
+            // Actualizar total
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            totalPriceElement.textContent = `$${totalPrice.toLocaleString('es-AR')}`;
+            
+            // Agregar eventos a los botones de cantidad
+            document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = parseInt(btn.getAttribute('data-id'));
+                    updateQuantity(id, -1);
+                });
+            });
+            
+            document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = parseInt(btn.getAttribute('data-id'));
+                    updateQuantity(id, 1);
+                });
+            });
+        }
+        
+        // Actualizar cantidad de un item
+        function updateQuantity(id, change) {
+            const itemIndex = cart.findIndex(item => item.id === id);
+            
+            if (itemIndex !== -1) {
+                cart[itemIndex].quantity += change;
+                
+                // Eliminar si la cantidad es 0 o menos
+                if (cart[itemIndex].quantity <= 0) {
+                    cart.splice(itemIndex, 1);
+                }
+                
+                updateCartUI();
+            }
+        }
+        
+        // Abrir/cerrar carrito
+        cartBtn.addEventListener('click', () => {
+            cartModal.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeCartBtn.addEventListener('click', closeCart);
+        overlay.addEventListener('click', closeCart);
+        
+        function closeCart() {
+            cartModal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Enviar pedido por WhatsApp
+        sendWhatsAppBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert('Agregá productos al carrito antes de enviar el pedido.');
+                return;
+            }
+            
+            // Formatear mensaje
+            let message = `*Pedido desde Bistró Lumière*\n\n`;
+            message += `Hola, me gustaría realizar el siguiente pedido:\n\n`;
+            
+            cart.forEach(item => {
+                message += `➡ ${item.quantity}x ${item.name} - $${item.price * item.quantity}\n`;
+            });
+            
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            message += `\n*Total: $${totalPrice.toLocaleString('es-AR')}*\n\n`;
+            message += `Mesa: [Número de mesa]\n`;
+            message += `Nombre: [Tu nombre]`;
+            
+            // Codificar para URL
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+            
+            // Abrir en nueva pestaña
+            window.open(whatsappURL, '_blank');
+            
+            // Opcional: vaciar carrito después de enviar
+            // cart = [];
+            // updateCartUI();
+            // closeCart();
+        });
+        
+        // Inicializar carrito
+        updateCartUI();
+    </script>
+</body>
+</html>
