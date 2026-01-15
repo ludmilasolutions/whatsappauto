@@ -37,6 +37,44 @@ body {
     overflow-x: hidden;
 }
 
+/* Clases para screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--primary-color);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 10000;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
 /* Pantalla de carga */
 .loading-screen {
     position: fixed;
@@ -208,6 +246,8 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .btn i {
@@ -217,10 +257,13 @@ body {
 .btn-primary {
     background-color: var(--primary-color);
     color: white;
+    border: 2px solid transparent;
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-primary:focus {
     background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
 }
 
 .btn-secondary {
@@ -239,6 +282,16 @@ body {
 
 .btn-success:hover {
     background-color: #3d8b40;
+}
+
+.btn-warning {
+    background-color: #FF9800;
+    color: white;
+    border: none;
+}
+
+.btn-warning:hover {
+    background-color: #F57C00;
 }
 
 .btn-logout {
@@ -261,6 +314,11 @@ body {
     font-size: 0.9rem;
     margin-top: 10px;
     min-height: 20px;
+    font-weight: 500;
+    background-color: #ffebee;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--error-color);
 }
 
 .auth-footer {
@@ -679,11 +737,14 @@ body {
     align-items: center;
     justify-content: center;
     transition: var(--transition);
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .btn-icon:hover {
     background-color: var(--primary-color);
     color: white;
+    transform: scale(1.1);
 }
 
 /* Tarjetas de contacto */
@@ -976,6 +1037,8 @@ body {
     cursor: pointer;
     line-height: 1;
     transition: var(--transition);
+    background: none;
+    border: none;
 }
 
 .close-modal:hover {
@@ -1015,6 +1078,7 @@ body {
     margin: 0 5px;
     cursor: pointer;
     transition: var(--transition);
+    border: none;
 }
 
 .variable-tag:hover {
@@ -1029,14 +1093,35 @@ body {
     margin-top: 10px;
 }
 
-.radio-group label {
+.radio-option {
     display: flex;
     align-items: center;
-    cursor: pointer;
+    margin-bottom: 10px;
 }
 
-.radio-group input {
-    margin-right: 8px;
+.radio-option input[type="radio"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+}
+
+.radio-option label {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+/* Estilos para fieldset */
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+legend {
+    font-weight: 500;
+    color: var(--text-color);
+    padding: 0 10px;
 }
 
 /* Vista previa de WhatsApp */
@@ -1202,6 +1287,220 @@ body {
     font-weight: 500;
 }
 
+/* Estilos para detalles de campaña */
+.campaign-details {
+    padding: 10px 0;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.detail-label {
+    font-weight: 600;
+    min-width: 120px;
+    color: var(--text-color);
+}
+
+.detail-value {
+    flex: 1;
+    color: var(--text-light);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.scheduled {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.status-badge.active {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-badge.paused {
+    background-color: #f5f5f5;
+    color: #757575;
+}
+
+.status-badge.completed {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.status-badge.cancelled {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.contact-avatar-small {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.contact-preview-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.contact-preview-item:hover {
+    background-color: #f9f9f9;
+}
+
+.contact-preview-item:last-child {
+    border-bottom: none;
+}
+
+.message-preview {
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    padding: 15px;
+    border-left: 4px solid var(--primary-color);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.contacts-preview {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+}
+
+/* Mejoras de accesibilidad */
+:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.btn:focus,
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.nav-link:focus,
+.tab:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Mejorar contraste para accesibilidad */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: 2px solid transparent;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Mejorar visibilidad de elementos deshabilitados */
+button:disabled,
+input:disabled,
+select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Asegurar buen contraste para texto */
+body {
+    color: #333333;
+    background-color: #ffffff;
+}
+
+/* Estilos para mensajes de validación */
+input:invalid,
+select:invalid,
+textarea:invalid {
+    border-color: var(--error-color);
+}
+
+input:valid,
+select:valid,
+textarea:valid {
+    border-color: var(--success-color);
+}
+
+/* Asegurar que los botones sean claramente botones */
+.btn {
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Mejorar navegación por teclado */
+.nav-link:focus,
+.tab:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Estilos para mejorar la legibilidad */
+p, li {
+    line-height: 1.6;
+}
+
+/* Asegurar buen contraste en tarjetas */
+.template-card,
+.contact-card,
+.campaign-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+}
+
+/* Mejorar visibilidad de bordes en modo de alto contraste */
+@media (prefers-contrast: high) {
+    .template-card,
+    .contact-card,
+    .campaign-card {
+        border: 2px solid #000000;
+    }
+    
+    .btn {
+        border: 2px solid #000000;
+    }
+}
+
+/* Soporte para reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /* Responsive */
 @media (max-width: 992px) {
     .stats-cards,
@@ -1270,6 +1569,14 @@ body {
     .modal-content {
         margin: 20px;
     }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1287,13 +1594,5 @@ body {
     
     .modal-body {
         padding: 15px;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-    
-    .form-actions .btn {
-        width: 100%;
     }
 }
