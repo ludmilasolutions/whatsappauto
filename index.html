@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Marketing Automatizado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📱</text></svg>">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Cargador inicial -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Cargando aplicación...</p>
+    </div>
+
+    <!-- Pantalla de login/registro -->
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="logo">
+                    <i class="fab fa-whatsapp"></i>
+                    <h1>WhatsApp Marketing</h1>
+                </div>
+                <p>Automatiza tus mensajes promocionales</p>
+            </div>
+            
+            <div class="auth-form">
+                <div class="tabs">
+                    <button id="login-tab" class="tab active">Iniciar Sesión</button>
+                    <button id="register-tab" class="tab">Registrarse</button>
+                </div>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" id="login-email" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="login-password" placeholder="Tu contraseña" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                    <p class="auth-error" id="login-error"></p>
+                </form>
+                
+                <form id="register-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" id="register-email" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña (mínimo 6 caracteres)</label>
+                        <input type="password" id="register-password" placeholder="Crea una contraseña" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmar contraseña</label>
+                        <input type="password" id="confirm-password" placeholder="Repite tu contraseña" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-user-plus"></i> Crear Cuenta
+                    </button>
+                    <p class="auth-error" id="register-error"></p>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Al registrarte, aceptas nuestros <a href="#" id="terms-link">Términos y Condiciones</a></p>
+                    <p class="setup-link">¿Primera vez? <a href="setup.html">Configurar Firebase</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aplicación principal (oculta inicialmente) -->
+    <div id="app-container" class="app-container" style="display: none;">
+        <!-- Barra de navegación -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fab fa-whatsapp"></i>
+                    <h1>WhatsApp Marketing</h1>
+                </div>
+                <nav class="main-nav">
+                    <a href="#" class="nav-link active" data-section="dashboard">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                    <a href="#" class="nav-link" data-section="templates">
+                        <i class="fas fa-file-alt"></i> Plantillas
+                    </a>
+                    <a href="#" class="nav-link" data-section="contacts">
+                        <i class="fas fa-users"></i> Contactos
+                    </a>
+                    <a href="#" class="nav-link" data-section="campaigns">
+                        <i class="fas fa-bullhorn"></i> Campañas
+                    </a>
+                    <a href="#" class="nav-link" data-section="analytics">
+                        <i class="fas fa-chart-bar"></i> Estadísticas
+                    </a>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=Usuario&background=4CAF50&color=fff" alt="Usuario" id="user-avatar">
+                    <span id="user-name">Usuario</span>
+                    <button id="logout-btn" class="btn btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="app-main">
+            <!-- Panel de control -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-home"></i> Panel de Control</h2>
+                    <p>Gestiona tus mensajes promocionales de WhatsApp</p>
+                </div>
+                
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #4CAF50;">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="templates-count">0</h3>
+                            <p>Plantillas guardadas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #2196F3;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="contacts-count">0</h3>
+                            <p>Contactos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #FF9800;">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="campaigns-count">0</h3>
+                            <p>Campañas activas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #9C27B0;">
+                            <i class="fas fa-share-square"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="messages-sent">0</h3>
+                            <p>Mensajes enviados</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <h3>Acciones rápidas</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" id="new-template-btn">
+                            <i class="fas fa-plus"></i> Nueva Plantilla
+                        </button>
+                        <button class="action-btn" id="new-contact-btn">
+                            <i class="fas fa-user-plus"></i> Agregar Contacto
+                        </button>
+                        <button class="action-btn" id="new-campaign-btn">
+                            <i class="fas fa-bullhorn"></i> Crear Campaña
+                        </button>
+                        <button class="action-btn" id="send-test-btn">
+                            <i class="fab fa-whatsapp"></i> Enviar Mensaje de Prueba
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="recent-activity">
+                    <h3>Actividad Reciente</h3>
+                    <div class="activity-list" id="activity-list">
+                        <div class="activity-item">
+                            <i class="fas fa-info-circle activity-icon"></i>
+                            <div class="activity-content">
+                                <p>Bienvenido a WhatsApp Marketing. Comienza creando tu primera plantilla de mensaje.</p>
+                                <small>Hace unos momentos</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gestión de plantillas -->
+            <section id="templates-section" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-file-alt"></i> Plantillas de Mensajes</h2>
+                    <p>Crea y gestiona plantillas para tus mensajes promocionales</p>
+                    <button class="btn btn-primary" id="add-template-btn">
+                        <i class="fas fa-plus"></i> Nueva Plantilla
+                    </button>
+                </div>
+                
+                <div class="templates-container" id="templates-container">
+                    <!-- Las plantillas se cargarán aquí dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Gestión de contactos -->
+            <section id="contacts-section" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> Gestión de Contactos</h2>
+                    <p>Administra tu lista de contactos para enviar mensajes</p>
+                    <button class="btn btn-primary" id="add-contact-btn">
+                        <i class="fas fa-plus"></i> Agregar Contacto
+                    </button>
+                </div>
+                
+                <div class="search-bar">
+                    <input type="text" id="contact-search" placeholder="Buscar contacto por nombre o teléfono...">
+                    <i class="fas fa-search"></i>
+                </div>
+                
+                <div class="contacts-container" id="contacts-container">
+                    <!-- Los contactos se cargarán aquí dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Creación de campañas -->
+            <section id="campaigns-section" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-bullhorn"></i> Campañas de Mensajería</h2>
+                    <p>Crea y programa envíos masivos de mensajes</p>
+                    <button class="btn btn-primary" id="create-campaign-btn">
+                        <i class="fas fa-plus"></i> Crear Campaña
+                    </button>
+                </div>
+                
+                <div class="campaigns-container" id="campaigns-container">
+                    <!-- Las campañas se cargarán aquí dinámicamente -->
+                </div>
+            </section>
+
+            <!-- Estadísticas -->
+            <section id="analytics-section" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar"></i> Estadísticas y Análisis</h2>
+                    <p>Mide el rendimiento de tus campañas de mensajería</p>
+                </div>
+                
+                <div class="analytics-container">
+                    <div class="chart-container">
+                        <canvas id="messagesChart"></canvas>
+                    </div>
+                    
+                    <div class="analytics-cards">
+                        <div class="analytics-card">
+                            <h4>Tasa de apertura</h4>
+                            <div class="analytics-value">78%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Respuestas recibidas</h4>
+                            <div class="analytics-value">42%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 42%"></div>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Conversiones</h4>
+                            <div class="analytics-value">15%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 15%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal para nueva plantilla -->
+        <div id="template-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-alt"></i> Nueva Plantilla</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="template-form">
+                        <div class="form-group">
+                            <label for="template-name">Nombre de la plantilla</label>
+                            <input type="text" id="template-name" placeholder="Ej: Promoción de verano" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="template-category">Categoría</label>
+                            <select id="template-category" required>
+                                <option value="">Seleccionar categoría</option>
+                                <option value="promocion">Promoción</option>
+                                <option value="recordatorio">Recordatorio</option>
+                                <option value="bienvenida">Bienvenida</option>
+                                <option value="followup">Seguimiento</option>
+                                <option value="general">General</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="template-content">Contenido del mensaje</label>
+                            <textarea id="template-content" rows="8" placeholder="Escribe tu mensaje aquí. Puedes usar variables como {{nombre}}, {{servicio}}, {{fecha}}..." required></textarea>
+                            <div class="variables-hint">
+                                <p>Variables disponibles: <span class="variable-tag" data-variable="{{nombre}}">{{nombre}}</span> 
+                                <span class="variable-tag" data-variable="{{servicio}}">{{servicio}}</span> 
+                                <span class="variable-tag" data-variable="{{fecha}}">{{fecha}}</span> 
+                                <span class="variable-tag" data-variable="{{precio}}">{{precio}}</span></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="template-image">Imagen (opcional)</label>
+                            <input type="text" id="template-image" placeholder="URL de la imagen (ej: https://ejemplo.com/imagen.jpg)">
+                            <small>Usa una URL pública de imagen para incluir en el mensaje</small>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Plantilla</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para nuevo contacto -->
+        <div id="contact-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-user-plus"></i> Nuevo Contacto</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label for="contact-name">Nombre del contacto</label>
+                            <input type="text" id="contact-name" placeholder="Ej: Juan Pérez" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-phone">Número de teléfono (WhatsApp)</label>
+                            <input type="tel" id="contact-phone" placeholder="Ej: 5491122334455" required>
+                            <small>Ingresa el número completo con código de país, sin el signo +</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-group">Grupo (opcional)</label>
+                            <select id="contact-group">
+                                <option value="">Sin grupo</option>
+                                <option value="clientes">Clientes</option>
+                                <option value="prospectos">Prospectos</option>
+                                <option value="familiares">Familiares</option>
+                                <option value="amigos">Amigos</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-notes">Notas (opcional)</label>
+                            <textarea id="contact-notes" rows="3" placeholder="Información adicional sobre este contacto"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Contacto</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para nueva campaña -->
+        <div id="campaign-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-bullhorn"></i> Nueva Campaña</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="campaign-form">
+                        <div class="form-group">
+                            <label for="campaign-name">Nombre de la campaña</label>
+                            <input type="text" id="campaign-name" placeholder="Ej: Lanzamiento de nuevo servicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="campaign-template">Plantilla a utilizar</label>
+                            <select id="campaign-template" required>
+                                <option value="">Seleccionar plantilla</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="campaign-contacts">Contactos a enviar</label>
+                            <select id="campaign-contacts" required>
+                                <option value="">Seleccionar grupo de contactos</option>
+                                <option value="all">Todos los contactos</option>
+                                <option value="clientes">Solo clientes</option>
+                                <option value="prospectos">Solo prospectos</option>
+                                <option value="custom">Selección personalizada</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Programar envío</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="schedule" value="now" checked> Enviar ahora
+                                </label>
+                                <label>
+                                    <input type="radio" name="schedule" value="later"> Programar para después
+                                </label>
+                            </div>
+                            <div id="schedule-datetime" style="display: none; margin-top: 10px;">
+                                <input type="datetime-local" id="campaign-datetime">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Crear Campaña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de vista previa de mensaje -->
+        <div id="preview-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fab fa-whatsapp"></i> Vista Previa del Mensaje</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="whatsapp-preview">
+                        <div class="whatsapp-header">
+                            <div class="whatsapp-contact">
+                                <i class="fas fa-user-circle"></i>
+                                <div>
+                                    <h4 id="preview-contact-name">Nombre del Contacto</h4>
+                                    <p>en línea</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="whatsapp-messages">
+                            <div class="message received">
+                                <p>Hola, ¿cómo estás?</p>
+                                <span class="message-time">10:00 AM</span>
+                            </div>
+                            <div class="message sent">
+                                <p id="preview-message-content">Este es el mensaje que se enviará</p>
+                                <span class="message-time" id="preview-message-time">10:01 AM</span>
+                            </div>
+                            <div class="message sent" id="preview-image-container" style="display: none;">
+                                <div class="message-image">
+                                    <img id="preview-image" src="" alt="Imagen">
+                                </div>
+                                <span class="message-time">10:01 AM</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-actions">
+                        <a id="whatsapp-send-link" target="_blank" class="btn btn-success">
+                            <i class="fab fa-whatsapp"></i> Abrir en WhatsApp
+                        </a>
+                        <button class="btn btn-secondary close-modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Términos y condiciones -->
+        <div id="terms-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-file-contract"></i> Términos y Condiciones</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="terms-content">
+                        <h4>Uso Aceptable de WhatsApp</h4>
+                        <p>Esta aplicación está diseñada para ayudarte a automatizar mensajes promocionales en WhatsApp de manera eficiente. Al utilizar esta aplicación, aceptas:</p>
+                        <ul>
+                            <li>Usar la aplicación solo para enviar mensajes a contactos que hayan dado su consentimiento previo para recibir mensajes promocionales.</li>
+                            <li>Cumplir con las políticas de WhatsApp y las regulaciones locales de mensajería comercial.</li>
+                            <li>No enviar spam, contenido malicioso o mensajes no solicitados.</li>
+                            <li>Ser el único responsable del contenido de los mensajes enviados a través de esta aplicación.</li>
+                        </ul>
+                        <h4>Limitaciones de Responsabilidad</h4>
+                        <p>Esta aplicación es una herramienta de automatización que genera enlaces de WhatsApp. No nos hacemos responsables por el uso indebido de la aplicación o por el incumplimiento de las políticas de WhatsApp.</p>
+                        <h4>Privacidad de Datos</h4>
+                        <p>Tus datos (plantillas, contactos, campañas) se almacenan de forma segura en Firebase y solo son accesibles para ti con tu cuenta de autenticación.</p>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary close-modal">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast de notificaciones -->
+        <div id="toast" class="toast">
+            <div class="toast-content">
+                <i class="fas fa-check-circle toast-icon"></i>
+                <p class="toast-message">Operación realizada con éxito</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
